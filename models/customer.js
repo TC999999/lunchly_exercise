@@ -29,7 +29,8 @@ class Customer {
     return results.rows.map((c) => new Customer(c));
   }
 
-  /**search for customers based on name */
+  /**search for customers based on query */
+
   static async getBySearch(search) {
     const results = await db.query(
       'SELECT id, first_name AS "firstName", last_name AS "lastName", phone, notes FROM customers WHERE first_name ILIKE $1 OR last_name ILIKE $1 ORDER BY first_name, last_name',
@@ -97,6 +98,7 @@ class Customer {
   }
 
   /** get the customer's full name */
+
   async fullName() {
     const fullName = `${this.firstName} ${this.lastName}`;
     return fullName;

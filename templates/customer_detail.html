@@ -14,9 +14,15 @@
     {% if reservations.length!==0 %}
     <ul>
       {% for reservation in reservations %}
-      <li>
+      <li class="mb-2">
         <b>{{ reservation.getformattedStartAt() }}</b> for {{
         reservation.numGuests }}
+        <a
+          class="btn btn-primary ml-1"
+          href="/{{reservation.id}}/reservation/edit/"
+        >
+          Edit
+        </a>
       </li>
       {% endfor %}
     </ul>

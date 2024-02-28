@@ -25,7 +25,8 @@ router.get("/", async function (req, res, next) {
   }
 });
 
-/**show list of customers based on name */
+/**show list of customers based on search query */
+
 router.get("/search", async function (req, res, next) {
   try {
     let customers = await Customer.getBySearch(req.query.name);
@@ -42,7 +43,8 @@ router.get("/search", async function (req, res, next) {
   }
 });
 
-/**show a list of the best customers */
+/**show a list of the 10 customers with the most reservations*/
+
 router.get("/top10", async function (req, res, next) {
   try {
     let customers = await Customer.getBest();
@@ -152,6 +154,28 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
     await reservation.save();
 
     return res.redirect(`/${customerId}/`);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.get("/:id/reservation/edit/", async function (req, res, next) {
+  try {
+    const reservation = await Reservation.get(req.params.id);
+    return res.render("reservation_edit.html", { reservation });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.post("/:id/reservation/edit/", async function (req, res, next) {
+  try {
+    const reservation = await Reservation.get(req.params.id);
+    reservation.startAt = new Date(req.body.startAt);
+    reservation.numGuests = req.body.numGuests;
+    reservation.notes = req.body.notes;
+    await reservation.save();
+    return res.redirect(`/${reservation.customerId}/`);
   } catch (err) {
     return next(err);
   }
