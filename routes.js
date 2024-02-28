@@ -25,6 +25,40 @@ router.get("/", async function (req, res, next) {
   }
 });
 
+/**show list of customers based on name */
+router.get("/search", async function (req, res, next) {
+  try {
+    let customers = await Customer.getBySearch(req.query.name);
+    customers = await Promise.all(
+      customers.map(async (c) => {
+        const fullName = await c.fullName();
+        c.fullName = fullName;
+        return c;
+      })
+    );
+    return res.render("customer_search.html", { customers });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/**show a list of the best customers */
+router.get("/top10", async function (req, res, next) {
+  try {
+    let customers = await Customer.getBest();
+    customers = await Promise.all(
+      customers.map(async (c) => {
+        const fullName = await c.fullName();
+        c.fullName = fullName;
+        return c;
+      })
+    );
+    return res.render("customer_best.html", { customers });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 /** Form to add a new customer. */
 
 router.get("/add/", async function (req, res, next) {

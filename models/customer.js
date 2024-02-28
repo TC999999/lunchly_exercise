@@ -29,6 +29,23 @@ class Customer {
     return results.rows.map((c) => new Customer(c));
   }
 
+  /**search for customers based on name */
+  static async getBySearch(search) {
+    const results = await db.query(
+      'SELECT id, first_name AS "firstName", last_name AS "lastName", phone, notes FROM customers WHERE first_name ILIKE $1 OR last_name ILIKE $1 ORDER BY first_name, last_name',
+      [search + "%"]
+    );
+    return results.rows.map((c) => new Customer(c));
+  }
+
+  /**Get the top 10 customers based on reservations */
+  static async getBest() {
+    const results = await db.query(
+      'SELECT customers.id AS id, first_name AS "firstName", last_name AS "lastName", customers.phone, customers.notes FROM reservations JOIN customers ON customer_id=customers.id GROUP BY last_name, first_name, customers.id  ORDER BY COUNT(*) DESC LIMIT 10;'
+    );
+    return results.rows.map((c) => new Customer(c));
+  }
+
   /** get a customer by ID. */
 
   static async get(id) {
